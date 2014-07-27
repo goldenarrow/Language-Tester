@@ -71,7 +71,7 @@ function language:fetchWords()
 		self.words[ctrl] = {}
 		self.words[ctrl]["name"] = line
 		f = io.open("Files/"..self.name.."/"..self.words[ctrl]["name"]..".txt")
-		self.words[ctrl]["checked"] = 0
+		self.words[ctrl].checked = 0
 		ctrls = 0
 		for iline in f:lines() do
 			if ctrls == 0 then
@@ -88,8 +88,10 @@ function language:fetchWords()
 end
 
 function language:selectWord()
+	math.randomseed(os.time())
 	amount = self.words["amount"] -1
-	rand = math.random(0, amount)
+	rand = math.random(amount)
+	print(rand)
 	while self.words[rand]["checked"] > 0 do
 		rand = math.random(0, self.words["amount"])
 	end
@@ -107,9 +109,9 @@ function language:testWord()
 			os.execute("cls")
 			print(testWord.name.."\n")
 			if hintUsed == 0 then
-				print("Type the meaning of this word.  If you get it wrong it will be given to you again at somepoint later.  Type 'help' for a hint")
+				print("Type the meaning of this word.  If you get it wrong it will be given to you again at somepoint later.  Type 'help' for a hint. Type 'a' for the answer. Type 'e' to end the test.")
 			else
-				print("Type the meaning of this word.  If you get it wrong it will be given to you again at somepoint later.  You cannot use the hint anymore.")
+				print("Type the meaning of this word.  If you get it wrong it will be given to you again at somepoint later.  You cannot use the hint anymore.  Type 'a' for the answer. Type 'e' to end the test.")
 			end
 			answer = io.read()
 			if answer == "help" and hintUsed == 0 then
@@ -119,13 +121,20 @@ function language:testWord()
 				wait = io.read()
 				os.execute("cls")
 				print(testWord.name.."\n")
-				print("Type the meaning of this word.  If you get it wrong it will be given to you again at somepoint later.  You cannot use the hint anymore.")
+				print("Type the meaning of this word.  If you get it wrong it will be given to you again at somepoint later.  You cannot use the hint anymore.  Type 'a' for the answer. Type 'e' to end the test.")
 				answer = io.read()
 				if answer == testWord.meaning then
 					print("Well Done.  Moving on!")
 					testScore = testScore + 1
 					testWord.checked = 1
 					wait = io.read()
+				elseif answer == "a" then
+					os.execute("cls")
+					print(testWord.meaning)
+					tesetWord.checked = 1
+					wait  = io.read()
+				elseif answer == "e" then
+					self:loadMenu()
 				else
 					i = i - 1
 					print("Sorry, try again later")
@@ -139,6 +148,13 @@ function language:testWord()
 				testWord.checked = 1
 				testScore = testScore + 1
 				wait = io.read()
+			elseif answer == "a" then
+				os.execute("cls")
+				print(testWord.meaning)
+				testWord.checked = 1
+				wait  = io.read()
+			elseif answer == "e" then
+				self:loadMenu()
 			else
 				i = i - 1
 				print("Sorry, Try Again Later.")
